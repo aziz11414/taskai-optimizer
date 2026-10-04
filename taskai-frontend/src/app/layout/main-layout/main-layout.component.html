@@ -1,0 +1,21 @@
+<div class="app-shell">
+  <app-sidebar></app-sidebar>
+
+  <div class="app-content">
+    <app-navbar></app-navbar>
+
+    @if (loadingService.loading()) {
+      <div class="global-loader-overlay">
+        <div class="global-loader-card">
+          <div class="loader-spinner"></div>
+          <h5 class="mb-1">Chargement...</h5>
+          <p class="mb-0 text-muted">TaskAI traite votre demande</p>
+        </div>
+      </div>
+    }
+
+    <div class="page-fade">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+:host {
+  display: block;
+}
+
+.stat-card {
+  padding: 1.25rem;
+  border-radius: 18px;
+  color: #fff;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  height: 100%;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.92rem;
+  opacity: 0.95;
+}
+
+.stat-value {
+  font-size: 2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.stat-card.primary {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+}
+
+.stat-card.warning {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+}
+
+.stat-card.info {
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+}
+
+.stat-card.success {
+  background: linear-gradient(135deg, #10b981, #34d399);
+}
+
+.chart-card {
+  min-height: 420px;
+}
+
+.chart-header h5 {
+  font-weight: 700;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+@media (max-width: 991.98px) {
+  .chart-card {
+    min-height: 380px;
+  }
+
+  .chart-wrapper {
+    height: 280px;
+  }
+}

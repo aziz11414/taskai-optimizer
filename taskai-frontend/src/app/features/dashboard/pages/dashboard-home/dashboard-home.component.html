@@ -1,0 +1,222 @@
+<div class="page-wrapper">
+  <div class="page-container">
+    <div class="page-header-premium mb-4 flex-wrap">
+      <div>
+        <h2 class="section-title mb-1">Dashboard</h2>
+        <p class="section-subtitle">
+          Vue d’ensemble intelligente et prédictive de votre activité
+        </p>
+      </div>
+
+      @if (hasDashboardData()) {
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          @if (dashboard?.userEmail) {
+            <span class="badge bg-light text-dark">
+              {{ dashboard?.userEmail }}
+            </span>
+          }
+
+          <span [class]="getWorkloadClass()">
+            Charge {{ getWorkloadLabel() }}
+          </span>
+        </div>
+      }
+    </div>
+
+    @if (loading) {
+      <div class="app-card text-center">
+        <p class="mb-0">Chargement du dashboard...</p>
+      </div>
+    } @else if (hasDashboardData()) {
+      <div class="row g-4 mb-4">
+        <div class="col-md-6 col-xl-2">
+          <div class="stat-card">
+            <div class="stat-label">Total</div>
+            <div class="stat-value">{{ dashboard?.analytics?.totalTasks ?? 0 }}</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-2">
+          <div class="stat-card">
+            <div class="stat-label">Todo</div>
+            <div class="stat-value">{{ dashboard?.analytics?.todoTasks ?? 0 }}</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-2">
+          <div class="stat-card">
+            <div class="stat-label">In Progress</div>
+            <div class="stat-value">{{ dashboard?.analytics?.inProgressTasks ?? 0 }}</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-2">
+          <div class="stat-card">
+            <div class="stat-label">Done</div>
+            <div class="stat-value">{{ dashboard?.analytics?.doneTasks ?? 0 }}</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-2">
+          <div class="stat-card">
+            <div class="stat-label">High Priority</div>
+            <div class="stat-value">{{ dashboard?.analytics?.highPriorityTasks ?? 0 }}</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-xl-2">
+          <div class="stat-card">
+            <div class="stat-label">Overdue</div>
+            <div class="stat-value">{{ dashboard?.analytics?.overdueTasks ?? 0 }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mb-4">
+        <div class="col-lg-7">
+          <div class="app-card premium-card h-100">
+            <div class="card-accent"></div>
+
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+              <div>
+                <h4 class="mb-1">Résumé intelligent</h4>
+                <p class="text-muted mb-0">Synthèse rapide de votre situation actuelle</p>
+              </div>
+
+              <a routerLink="/analytics" class="btn btn-light-custom btn-sm">
+                Voir analytics
+              </a>
+            </div>
+
+            <p class="mb-3">{{ dashboard?.summary }}</p>
+
+            <div class="dashboard-progress-box">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-semibold">Taux de complétion</span>
+                <span class="small fw-bold">{{ getCompletionRate() }}%</span>
+              </div>
+
+              <div class="score-bar">
+                <div class="score-fill score-combined" [style.width]="getCompletionWidth()"></div>
+              </div>
+            </div>
+
+            <div class="row g-3 mt-3">
+              <div class="col-md-4">
+                <div class="mini-kpi">
+                  <div class="mini-kpi-label">Todo</div>
+                  <div class="mini-kpi-value">{{ dashboard?.analytics?.todoTasks ?? 0 }}</div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="mini-kpi">
+                  <div class="mini-kpi-label">Prioritaires</div>
+                  <div class="mini-kpi-value">{{ dashboard?.analytics?.highPriorityTasks ?? 0 }}</div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="mini-kpi">
+                  <div class="mini-kpi-label">En retard</div>
+                  <div class="mini-kpi-value">{{ dashboard?.analytics?.overdueTasks ?? 0 }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="app-card premium-card h-100">
+            <div class="card-accent"></div>
+
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+              <div>
+                <h4 class="mb-1">Meilleure recommandation IA</h4>
+                <p class="text-muted mb-0">La prochaine meilleure tâche à traiter</p>
+              </div>
+
+              <a routerLink="/ai-insights" class="btn btn-primary btn-sm">
+                Voir AI
+              </a>
+            </div>
+
+            @if (dashboard?.recommendation) {
+              <h5 class="mb-2">{{ dashboard?.recommendation?.title }}</h5>
+              <p class="text-muted">
+                {{ dashboard?.recommendation?.description || 'Aucune description' }}
+              </p>
+
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <span [class]="getStatusClass(dashboard?.recommendation?.status)">
+                  {{ dashboard?.recommendation?.status }}
+                </span>
+
+                <span [class]="getPriorityClass(dashboard?.recommendation?.priority)">
+                  {{ dashboard?.recommendation?.priority }}
+                </span>
+
+                @if (isLikelyLate(dashboard?.recommendation?.delayProbability)) {
+                  <span class="badge badge-high">Likely Late</span>
+                }
+
+                <span [class]="getConfidenceClass(dashboard?.recommendation?.confidenceScore)">
+                  Confidence {{ formatScore(dashboard?.recommendation?.confidenceScore) }}%
+                </span>
+              </div>
+
+              <div class="mb-3">
+                <label class="small fw-semibold mb-1 d-block">Combined Score</label>
+                <div class="score-bar">
+                  <div
+                    class="score-fill score-combined"
+                    [style.width]="getScoreWidth(dashboard?.recommendation?.combinedScore)">
+                  </div>
+                </div>
+                <small>{{ formatScore(dashboard?.recommendation?.combinedScore) }}/100</small>
+              </div>
+
+              <div class="prediction-grid mb-3">
+                <div class="prediction-box">
+                  <span class="prediction-label">Delay Probability</span>
+                  <strong>{{ formatScore(dashboard?.recommendation?.delayProbability) }}%</strong>
+                </div>
+
+                <div class="prediction-box">
+                  <span class="prediction-label">Completion Probability</span>
+                  <strong>{{ formatScore(dashboard?.recommendation?.completionProbability) }}%</strong>
+                </div>
+              </div>
+
+              <div class="ai-summary-box mb-3">
+                <strong>Predicted Completion</strong>
+                <p class="mb-0 mt-2">
+                  {{
+                    dashboard?.recommendation?.predictedCompletionAt
+                      ? (dashboard?.recommendation?.predictedCompletionAt | date:'medium')
+                      : 'Non disponible'
+                  }}
+                </p>
+              </div>
+
+              <div class="ai-summary-box">
+                <strong>Résumé IA</strong>
+                <p class="mb-0 mt-2">{{ dashboard?.recommendation?.summary }}</p>
+              </div>
+            } @else {
+              <div class="empty-state">
+                <i class="bi bi-stars"></i>
+                <p class="mb-0">Aucune recommandation disponible.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <i class="bi bi-inbox"></i>
+        <p class="mb-0">Aucune donnée dashboard disponible.</p>
+      </div>
+    }
+  </div>
+</div>

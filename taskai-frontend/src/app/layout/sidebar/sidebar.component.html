@@ -1,0 +1,65 @@
+<div class="sidebar">
+  <!-- BRAND -->
+  <div class="sidebar-brand">
+    <div class="sidebar-logo">
+      <i class="bi bi-robot"></i>
+    </div>
+    <div>
+      <div class="sidebar-brand-title">TaskAI</div>
+      <div class="sidebar-brand-subtitle">Optimizer</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="sidebar-section-title">Main</div>
+
+  <a routerLink="/dashboard" routerLinkActive="active" class="sidebar-link">
+    <i class="bi bi-speedometer2"></i>
+    <span>Dashboard</span>
+  </a>
+
+  <a routerLink="/tasks" routerLinkActive="active" class="sidebar-link">
+    <i class="bi bi-list-task"></i>
+    <span>Tasks</span>
+  </a>
+
+  <a routerLink="/tasks/new" routerLinkActive="active" class="sidebar-link">
+    <i class="bi bi-plus-circle"></i>
+    <span>Create Task</span>
+  </a>
+
+  <a routerLink="/analytics" routerLinkActive="active" class="sidebar-link">
+    <i class="bi bi-bar-chart-line"></i>
+    <span>Analytics</span>
+  </a>
+
+  <a routerLink="/ai-insights" routerLinkActive="active" class="sidebar-link">
+    <i class="bi bi-stars"></i>
+    <span>AI Insights</span>
+  </a>
+
+  <!-- NOTIFICATIONS 🔔 -->
+  <a routerLink="/notifications" routerLinkActive="active" class="sidebar-link notif-link">
+    <i class="bi bi-bell"></i>
+    <span>Notifications</span>
+
+    @if (unreadCount() > 0) {
+  <span class="sidebar-badge">{{ unreadCount() }}</span>
+}
+  </a>
+
+  <!-- ADMIN -->
+  @if (isAdmin()) {
+    <div class="sidebar-section-title mt-4">Administration</div>
+
+    <a routerLink="/admin" routerLinkActive="active" class="sidebar-link">
+      <i class="bi bi-shield-lock"></i>
+      <span>Admin</span>
+    </a>
+
+    <a routerLink="/admin/users" routerLinkActive="active" class="sidebar-link">
+      <i class="bi bi-people"></i>
+      <span>Users</span>
+    </a>
+  }
+</div>

@@ -1,0 +1,223 @@
+<div class="page-wrapper">
+  <div class="page-container">
+    <div class="page-header-premium mb-4 flex-wrap">
+      <div>
+        <h2 class="section-title mb-1">Tasks</h2>
+        <p class="section-subtitle">Gérez, recherchez et priorisez intelligemment toutes vos tâches</p>
+      </div>
+
+      <a routerLink="/tasks/new" class="btn btn-primary btn-premium">
+        <i class="bi bi-plus-circle me-2"></i>
+        Nouvelle tâche
+      </a>
+    </div>
+
+    <div class="app-card premium-card mb-4">
+      <div class="card-accent"></div>
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Recherche</label>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Titre, description, utilisateur..."
+            [value]="searchTerm()"
+            (input)="onSearchChange($any($event.target).value)"
+          />
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Statut</label>
+          <select
+            class="form-select"
+            [value]="selectedStatus()"
+            (change)="onStatusChange($any($event.target).value)">
+            <option value="ALL">Tous</option>
+            <option value="TODO">TODO</option>
+            <option value="IN_PROGRESS">IN_PROGRESS</option>
+            <option value="DONE">DONE</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Priorité</label>
+          <select
+            class="form-select"
+            [value]="selectedPriority()"
+            (change)="onPriorityChange($any($event.target).value)">
+            <option value="ALL">Toutes</option>
+            <option value="HIGH">HIGH</option>
+            <option value="MEDIUM">MEDIUM</option>
+            <option value="LOW">LOW</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Tri</label>
+          <select
+            class="form-select"
+            [value]="sortBy()"
+            (change)="onSortChange($any($event.target).value)">
+            <option value="createdAt">Création récente</option>
+            <option value="dueDate">Deadline proche</option>
+            <option value="title">Titre A-Z</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    @if (loading) {
+      <div class="app-card text-center">
+        <p class="mb-0">Chargement des tâches...</p>
+      </div>
+    } @else if (filteredTasks().length > 0) {
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div class="tasks-count">
+          {{ filteredTasks().length }} tâche(s) trouvée(s)
+        </div>
+
+        <div class="pagination-info">
+          Page {{ currentPage() }} / {{ totalPages() }}
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Tâche</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Deadline</th>
+              <th>Risk</th>
+              <th>Score</th>
+              <th>Assigned User</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (task of paginatedTasks(); track task.id) {
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ task.title }}</div>
+                  <small class="text-muted task-description-preview">
+                    {{ task.description || 'Aucune description' }}
+                  </small>
+
+                  @if (isLikelyLate(task)) {
+                    <div class="mt-1">
+                      <span class="badge badge-high">Likely Late</span>
+                    </div>
+                  }
+                </td>
+
+                <td>
+                  <span [class]="getStatusClass(task.status)">
+                    {{ task.status }}
+                  </span>
+                </td>
+
+                <td>
+                  <span [class]="getPriorityClass(task.priority)">
+                    {{ task.priority }}
+                  </span>
+                </td>
+
+                <td>
+                  @if (task.dueDate) {
+                    <div [class]="getDeadlineClass(task)">
+                      {{ task.dueDate | date:'medium' }}
+                    </div>
+                  } @else {
+                    <span class="deadline-normal">-</span>
+                  }
+                </td>
+
+                <td>
+                  <span
+                    class="risk-badge"
+                    [class.risk-high]="getRiskLevel(task) === 'HIGH'"
+                    [class.risk-medium]="getRiskLevel(task) === 'MEDIUM'"
+                    [class.risk-low]="getRiskLevel(task) === 'LOW'">
+                    {{ getRiskLevel(task) }}
+                  </span>
+                </td>
+
+                <td style="min-width: 120px;">
+                  <div class="fw-semibold">{{ getScore(task) }}%</div>
+                  <div class="score-bar">
+                    <div
+                      class="score-bar-fill"
+                      [class.score-high]="getScore(task) > 70"
+                      [class.score-medium]="getScore(task) > 40 && getScore(task) <= 70"
+                      [class.score-low]="getScore(task) <= 40"
+                      [style.width.%]="getScore(task)">
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="fw-medium">{{ task.userFullName || '-' }}</div>
+                  <small class="text-muted">{{ task.userEmail || '' }}</small>
+                </td>
+
+                <td class="text-end">
+                  <div class="d-flex justify-content-end gap-2 flex-wrap">
+                    <a [routerLink]="['/tasks', task.id]" class="btn btn-sm btn-light-custom">
+                      Voir
+                    </a>
+
+                    <a [routerLink]="['/tasks', task.id, 'edit']" class="btn btn-sm btn-outline-primary">
+                      Modifier
+                    </a>
+
+                    <a [routerLink]="['/ai-insights']" class="btn btn-sm btn-outline-secondary">
+                      IA
+                    </a>
+
+                    @if (canDelete()) {
+                      <button class="btn btn-sm btn-outline-danger" (click)="deleteTask(task)">
+                        Supprimer
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+        <button
+          class="btn btn-light-custom"
+          (click)="previousPage()"
+          [disabled]="currentPage() === 1">
+          <i class="bi bi-chevron-left me-1"></i>
+          Précédent
+        </button>
+
+        <div class="pagination-pages">
+          <span class="pagination-badge">
+            {{ currentPage() }}
+          </span>
+        </div>
+
+        <button
+          class="btn btn-light-custom"
+          (click)="nextPage()"
+          [disabled]="currentPage() === totalPages()">
+          Suivant
+          <i class="bi bi-chevron-right ms-1"></i>
+        </button>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <i class="bi bi-list-task"></i>
+        <p class="mb-0">Aucune tâche trouvée avec ces critères.</p>
+      </div>
+    }
+  </div>
+</div>

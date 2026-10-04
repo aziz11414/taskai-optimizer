@@ -1,0 +1,131 @@
+<div class="auth-page">
+  <div class="auth-shell">
+
+    <!-- ── LEFT BRAND PANEL ── -->
+    <div class="auth-brand-panel">
+      <div class="brand-logo-wrap">
+        <img src="assets/icons/logo.png" alt="TaskAI Optimizer" class="auth-brand-logo" />
+        <span class="brand-name">TaskAI Optimizer</span>
+      </div>
+
+      <div class="brand-eyebrow">
+        <span class="dot"></span>
+        Productivité intelligente
+      </div>
+
+      <h1>
+        Gérez vos tâches<br />
+        avec <span class="highlight">l'IA</span> à vos côtés
+      </h1>
+
+      <p class="auth-brand-text">
+        Centralisez, priorisez et agissez avec clarté. Une plateforme
+        moderne pensée pour les équipes qui veulent aller plus vite.
+      </p>
+
+      <div class="auth-brand-points">
+        <div class="auth-point">
+          <div class="auth-point-icon">
+            <i class="bi bi-lightning-charge-fill"></i>
+          </div>
+          <div class="auth-point-text">
+            <strong>Priorisation par IA</strong>
+            <span>Score intelligent selon urgence &amp; impact</span>
+          </div>
+        </div>
+        <div class="auth-point">
+          <div class="auth-point-icon">
+            <i class="bi bi-bar-chart-line-fill"></i>
+          </div>
+          <div class="auth-point-text">
+            <strong>Dashboard analytique</strong>
+            <span>Visualisez vos performances en temps réel</span>
+          </div>
+        </div>
+        <div class="auth-point">
+          <div class="auth-point-icon">
+            <i class="bi bi-bell-fill"></i>
+          </div>
+          <div class="auth-point-text">
+            <strong>Alertes actionnables</strong>
+            <span>Notifications utiles, jamais du bruit</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT FORM PANEL ── -->
+    <div class="auth-card">
+      <div class="auth-header">
+
+        <!-- LOGO BIEN VISIBLE DANS LE FORMULAIRE -->
+        <div class="auth-logo-wrap">
+          <img src="assets/icons/logo.png" alt="TaskAI Optimizer" class="auth-logo" />
+          <div class="auth-logo-label">
+            <strong>TaskAI Optimizer</strong>
+            <span>Espace de travail intelligent</span>
+          </div>
+        </div>
+
+        <h2>Bon retour 👋</h2>
+        <p>Connectez-vous à votre espace de travail.</p>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="form-group">
+          <label>Adresse email</label>
+          <div class="input-wrap">
+            <i class="bi bi-envelope field-icon"></i>
+            <input
+              type="email"
+              formControlName="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+            />
+          </div>
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <small><i class="bi bi-exclamation-circle"></i> Email invalide</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <div class="input-wrap">
+            <i class="bi bi-lock field-icon"></i>
+            <input
+              type="password"
+              formControlName="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+          </div>
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <small><i class="bi bi-exclamation-circle"></i> Mot de passe requis (min. 4 caractères)</small>
+          }
+          <div class="form-meta">
+            <a routerLink="/forgot-password">Mot de passe oublié ?</a>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="loading">
+          @if (loading) {
+            <i class="bi bi-arrow-repeat"></i>&nbsp; Connexion en cours…
+          } @else {
+            Se connecter &nbsp;→
+          }
+        </button>
+
+      </form>
+
+      <div class="auth-divider">
+        <span>Pas encore de compte ?</span>
+      </div>
+
+      <div class="auth-footer">
+        <a routerLink="/register">Créer un compte gratuit →</a>
+      </div>
+    </div>
+
+  </div>
+</div>

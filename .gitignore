@@ -1,0 +1,32 @@
+# ===== Java / Spring Boot =====
+**/target/
+*.class
+*.jar
+*.war
+
+# ===== IntelliJ / IDE =====
+.idea/
+*.iml
+.vscode/
+
+# ===== Node / Angular =====
+**/node_modules/
+**/dist/
+**/.angular/
+
+# ===== Environment / secrets =====
+.env
+.env.*
+!.env.example
+
+# ===== Logs =====
+*.log
+logs/
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Temporary =====
+*.tmp
+*.swp

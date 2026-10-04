@@ -1,0 +1,128 @@
+<div class="page-wrapper">
+  <div class="page-container">
+    <div class="page-header-premium mb-4 flex-wrap">
+      <div>
+        <h2 class="section-title mb-1">Notifications</h2>
+        <p class="section-subtitle">
+          Suivez les alertes, événements et actions importantes de votre espace.
+        </p>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <span class="unread-pill">
+          <i class="bi bi-bell-fill me-1"></i>
+          {{ unreadCount }} non lue(s)
+        </span>
+
+        <button
+          class="btn btn-light-custom btn-premium"
+          (click)="refreshAll()"
+          [disabled]="loading || bulkLoading">
+          <i class="bi bi-arrow-clockwise me-1"></i>
+          Actualiser
+        </button>
+
+        <button
+          class="btn btn-light-custom btn-premium"
+          (click)="markAllAsRead()"
+          [disabled]="unreadCount === 0 || bulkLoading">
+          <i class="bi bi-check2-all me-1"></i>
+          Tout marquer comme lu
+        </button>
+      </div>
+    </div>
+
+    <div class="notification-filters mb-4">
+      <button class="btn btn-sm" [class.active]="activeFilter === 'ALL'" (click)="setFilter('ALL')">Toutes</button>
+      <button class="btn btn-sm" [class.active]="activeFilter === 'UNREAD'" (click)="setFilter('UNREAD')">Non lues</button>
+      <button class="btn btn-sm" [class.active]="activeFilter === 'AI_RECOMMENDATION'" (click)="setFilter('AI_RECOMMENDATION')">IA</button>
+      <button class="btn btn-sm" [class.active]="activeFilter === 'WARNING'" (click)="setFilter('WARNING')">Alertes</button>
+      <button class="btn btn-sm" [class.active]="activeFilter === 'ERROR'" (click)="setFilter('ERROR')">Erreurs</button>
+      <button class="btn btn-sm" [class.active]="activeFilter === 'SUCCESS'" (click)="setFilter('SUCCESS')">Succès</button>
+    </div>
+
+    @if (loading) {
+      <div class="app-card text-center">
+        <p class="mb-0">Chargement des notifications...</p>
+      </div>
+    } @else if (filteredNotifications.length > 0) {
+      <div class="notifications-list">
+        @for (notification of filteredNotifications; track trackById($index, notification)) {
+          <div
+            class="notification-card"
+            [class.unread]="!notification.isRead"
+            (click)="openNotification(notification)"
+          >
+            <div class="notification-left">
+              <div class="notification-icon" [ngClass]="getTypeClass(notification.type)">
+                <i [class]="getTypeIcon(notification.type)"></i>
+              </div>
+            </div>
+
+            <div class="notification-body">
+              <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                <div class="flex-grow-1">
+                  <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                    <h5 class="mb-0 notification-title">{{ notification.title }}</h5>
+
+                    @if (!notification.isRead) {
+                      <span class="new-dot"></span>
+                    }
+
+                    <span class="badge notif-type-badge" [ngClass]="getTypeClass(notification.type)">
+                      {{ getTypeLabel(notification.type) }}
+                    </span>
+                  </div>
+
+                  <p class="mb-2 notification-message">
+                    {{ notification.message }}
+                  </p>
+
+                  <small class="text-muted d-flex flex-wrap gap-3">
+                    <span>
+                      <i class="bi bi-clock me-1"></i>
+                      {{ notification.createdAt | date:'medium' }}
+                    </span>
+
+                    @if (notification.relatedTaskId) {
+                      <span>
+                        <i class="bi bi-list-task me-1"></i>
+                        Tâche #{{ notification.relatedTaskId }}
+                      </span>
+                    }
+                  </small>
+                </div>
+
+                <div class="notification-actions">
+                  @if (!notification.isRead) {
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-outline-primary"
+                      [disabled]="itemLoadingIds.has(notification.id)"
+                      (click)="markAsRead(notification); $event.stopPropagation()">
+                      Lu
+                    </button>
+                  }
+
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-danger"
+                    [disabled]="itemLoadingIds.has(notification.id)"
+                    (click)="deleteNotification(notification, $event)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state premium-empty">
+        <i class="bi bi-bell"></i>
+        <h5 class="mb-2">Aucune notification</h5>
+        <p class="mb-0">Les nouvelles alertes apparaîtront ici.</p>
+      </div>
+    }
+  </div>
+</div>

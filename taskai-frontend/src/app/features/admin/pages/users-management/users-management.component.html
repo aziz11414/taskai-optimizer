@@ -1,0 +1,196 @@
+<div class="page-wrapper">
+  <div class="page-container">
+    <div class="mb-4">
+      <h2 class="section-title">Users Management</h2>
+      <p class="section-subtitle">Créer, rechercher, modifier et supprimer les utilisateurs.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="app-card h-100">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h4 class="mb-0">
+              {{ editMode ? 'Modifier utilisateur' : 'Créer un utilisateur' }}
+            </h4>
+            <i class="bi" [ngClass]="editMode ? 'bi-pencil-square text-warning' : 'bi-person-plus text-primary'" class="fs-3"></i>
+          </div>
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label class="form-label">Nom complet</label>
+              <input type="text" class="form-control" formControlName="fullName" placeholder="Ex: Aziz Hammami" />
+              @if (form.controls.fullName.touched && form.controls.fullName.invalid) {
+                <small class="text-danger">Le nom complet est requis</small>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" formControlName="email" placeholder="Ex: admin@taskai.com" />
+              @if (form.controls.email.touched && form.controls.email.invalid) {
+                <small class="text-danger">Email invalide</small>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">
+                {{ editMode ? 'Nouveau mot de passe (optionnel)' : 'Mot de passe' }}
+              </label>
+              <input type="password" class="form-control" formControlName="password" placeholder="Minimum 4 caractères" />
+              @if (form.controls.password.touched && form.controls.password.invalid) {
+                <small class="text-danger">Mot de passe invalide</small>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Rôle</label>
+              <select class="form-select" formControlName="role">
+                @for (role of roles; track role) {
+                  <option [value]="role">{{ role }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary w-100" [disabled]="saving">
+                {{ saving ? (editMode ? 'Mise à jour...' : 'Création...') : (editMode ? 'Mettre à jour' : 'Créer utilisateur') }}
+              </button>
+
+              @if (editMode) {
+                <button type="button" class="btn btn-light-custom" (click)="cancelEdit()">
+                  Annuler
+                </button>
+              }
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="app-card h-100">
+          <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+            <h4 class="mb-0">Liste des utilisateurs</h4>
+
+            <div class="d-flex gap-2">
+              <input
+                type="text"
+                class="form-control form-control-sm admin-search-input"
+                placeholder="Recherche nom, email, rôle..."
+                [value]="searchTerm"
+                (input)="onSearch($any($event.target).value)"
+              />
+              <button class="btn btn-light-custom btn-sm" (click)="loadUsers()">
+                <i class="bi bi-arrow-clockwise me-1"></i>
+                Refresh
+              </button>
+            </div>
+          </div>
+
+          @if (loading) {
+            <div class="text-center py-4">
+              <p class="mb-0">Chargement des utilisateurs...</p>
+            </div>
+          } @else if (filteredUsers.length > 0) {
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nom complet</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (user of filteredUsers; track trackByUserId($index, user)) {
+                    <tr>
+                      <td>#{{ user.id }}</td>
+                      <td class="fw-semibold">{{ user.fullName }}</td>
+                      <td>{{ user.email }}</td>
+                      <td>
+                        <span [class]="getRoleBadgeClass(user.role)">
+                          {{ user.role }}
+                        </span>
+                      </td>
+                      <td class="text-end">
+                        <div class="d-flex justify-content-end gap-2">
+                          <button class="btn btn-sm btn-outline-primary" (click)="viewUser(user)">
+                            Voir
+                          </button>
+                          <button class="btn btn-sm btn-outline-warning" (click)="editUser(user)">
+                            Modifier
+                          </button>
+                          <button class="btn btn-sm btn-outline-danger" (click)="deleteUser(user)">
+                            Supprimer
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          } @else {
+            <div class="empty-state">
+              <i class="bi bi-people"></i>
+              <p class="mb-0">Aucun utilisateur trouvé.</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-12">
+        <div class="app-card">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h4 class="mb-0">Détail utilisateur</h4>
+            @if (selectedUser) {
+              <button class="btn btn-light-custom btn-sm" (click)="clearSelection()">
+                Fermer
+              </button>
+            }
+          </div>
+
+          @if (selectedUser) {
+            <div class="row g-3">
+              <div class="col-md-3">
+                <div class="user-detail-box">
+                  <small class="text-muted d-block">ID</small>
+                  <strong>#{{ selectedUser.id }}</strong>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="user-detail-box">
+                  <small class="text-muted d-block">Nom complet</small>
+                  <strong>{{ selectedUser.fullName }}</strong>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="user-detail-box">
+                  <small class="text-muted d-block">Email</small>
+                  <strong>{{ selectedUser.email }}</strong>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="user-detail-box">
+                  <small class="text-muted d-block">Rôle</small>
+                  <strong>{{ selectedUser.role }}</strong>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="empty-state">
+              <i class="bi bi-person-badge"></i>
+              <p class="mb-0">Sélectionne un utilisateur pour voir ses détails.</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

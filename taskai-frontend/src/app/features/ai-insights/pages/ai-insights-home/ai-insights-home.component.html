@@ -1,0 +1,258 @@
+<div class="page-wrapper">
+  <div class="page-container">
+    <div class="page-header-premium mb-4">
+      <div>
+        <h2 class="section-title mb-1">Insights IA</h2>
+        <p class="section-subtitle">
+          Recommandations intelligentes, prédiction de retard et analyse explicable
+        </p>
+      </div>
+    </div>
+
+    @if (loading) {
+      <div class="app-card text-center">
+        <p class="mb-0">Chargement des insights IA...</p>
+      </div>
+    } @else {
+      <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+          <div class="app-card premium-card h-100">
+            <div class="card-accent"></div>
+            <h4 class="mb-3">Meilleure tâche recommandée</h4>
+
+            @if (bestTask) {
+              <div class="hero-task-card">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3 flex-wrap">
+                  <div>
+                    <h5 class="mb-2">{{ bestTask.title }}</h5>
+                    <p class="text-muted mb-0">
+                      {{ bestTask.description || 'Aucune description disponible.' }}
+                    </p>
+                  </div>
+
+                  <div class="score-pill">
+                    {{ formatScore(bestTask.combinedScore) }}
+                  </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                  <span [class]="getStatusClass(bestTask.status)">{{ getStatusLabel(bestTask.status) }}</span>
+                  <span [class]="getPriorityClass(bestTask.priority)">{{ getPriorityLabel(bestTask.priority) }}</span>
+                  <span [class]="getLevelClass(bestTask.priorityLevel)">Priorité {{ getLevelLabel(bestTask.priorityLevel) }}</span>
+                  <span [class]="getLevelClass(bestTask.riskLevel)">Risque {{ getLevelLabel(bestTask.riskLevel) }}</span>
+                  <span [class]="getConfidenceClass(bestTask.confidenceScore)">
+                    Confiance {{ formatScore(bestTask.confidenceScore) }}%
+                  </span>
+
+                  @if (isLikelyLate(bestTask.delayProbability)) {
+                    <span class="badge badge-high">Risque de retard</span>
+                  }
+                </div>
+
+                <div class="mb-3">
+                  <label class="metric-label">Score de priorité</label>
+                  <div class="score-bar">
+                    <div class="score-fill score-priority" [style.width]="getScoreWidth(bestTask.priorityScore)"></div>
+                  </div>
+                  <small>{{ formatScore(bestTask.priorityScore) }}/100</small>
+                </div>
+
+                <div class="mb-3">
+                  <label class="metric-label">Score de risque</label>
+                  <div class="score-bar">
+                    <div class="score-fill score-risk" [style.width]="getScoreWidth(bestTask.riskScore)"></div>
+                  </div>
+                  <small>{{ formatScore(bestTask.riskScore) }}/100</small>
+                </div>
+
+                <div class="mb-3">
+                  <label class="metric-label">Score combiné</label>
+                  <div class="score-bar">
+                    <div class="score-fill score-combined" [style.width]="getScoreWidth(bestTask.combinedScore)"></div>
+                  </div>
+                  <small>{{ formatScore(bestTask.combinedScore) }}/100</small>
+                </div>
+
+                <div class="prediction-grid mb-3">
+                  <div class="prediction-box">
+                    <span class="prediction-label">Probabilité de retard</span>
+                    <strong>{{ formatScore(bestTask.delayProbability) }}%</strong>
+                  </div>
+
+                  <div class="prediction-box">
+                    <span class="prediction-label">Probabilité de complétion</span>
+                    <strong>{{ formatScore(bestTask.completionProbability) }}%</strong>
+                  </div>
+                </div>
+
+                <div class="ai-summary-box mb-3">
+                  <strong>Complétion prédite</strong>
+                  <p class="mb-0 mt-2">
+                    {{ bestTask.predictedCompletionAt ? (bestTask.predictedCompletionAt | date:'medium') : 'Non disponible' }}
+                  </p>
+                </div>
+
+                <div class="ai-summary-box">
+                  <strong>Résumé IA</strong>
+                  <p class="mb-0 mt-2">{{ bestTask.summary }}</p>
+                </div>
+              </div>
+            } @else {
+              <div class="empty-state">
+                <i class="bi bi-stars"></i>
+                <p class="mb-0">Aucune tâche active recommandée pour le moment.</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="app-card premium-card h-100">
+            <div class="card-accent"></div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <h4 class="mb-0">Top recommandations</h4>
+              <span class="badge bg-light text-dark">
+                {{ topTasks.totalCandidates }} candidate(s)
+              </span>
+            </div>
+
+            @if (topTasks.recommendations.length > 0) {
+              <div class="d-flex flex-column gap-3">
+                @for (task of topTasks.recommendations; track task.taskId) {
+                  <div class="ai-task-card">
+                    <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                      <div class="flex-grow-1">
+                        <h6 class="mb-1">{{ task.title }}</h6>
+                        <p class="mb-2 text-muted">{{ task.summary }}</p>
+
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                          <span [class]="getStatusClass(task.status)">{{ getStatusLabel(task.status) }}</span>
+                          <span [class]="getPriorityClass(task.priority)">{{ getPriorityLabel(task.priority) }}</span>
+                          <span [class]="getLevelClass(task.priorityLevel)">{{ getLevelLabel(task.priorityLevel) }}</span>
+                          <span [class]="getConfidenceClass(task.confidenceScore)">
+                            Confiance {{ formatScore(task.confidenceScore) }}%
+                          </span>
+                        </div>
+
+                        <small class="text-muted d-block">
+                          Retard : {{ formatScore(task.delayProbability) }}% ·
+                          Complétion : {{ formatScore(task.completionProbability) }}%
+                        </small>
+                      </div>
+
+                      <div class="text-end">
+                        <div class="score-pill">
+                          {{ formatScore(task.combinedScore) }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-state">
+                <i class="bi bi-list-check"></i>
+                <p class="mb-0">Aucune recommandation disponible.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="app-card premium-card">
+        <div class="card-accent"></div>
+
+        <h4 class="mb-2">Analyser une tâche</h4>
+        <p class="text-muted mb-4">
+          Choisis une tâche pour obtenir une explication détaillée par l’IA prédictive.
+        </p>
+
+        <div class="row g-3 align-items-end mb-4">
+          <div class="col-md-9">
+            <label class="form-label">Tâche</label>
+            <select class="form-select" [(ngModel)]="selectedTaskId">
+              <option [ngValue]="null">-- Sélectionner une tâche --</option>
+              @for (task of tasks; track task.id) {
+                <option [ngValue]="task.id">
+                  {{ task.title }} - {{ getPriorityLabel(task.priority) }} - {{ getStatusLabel(task.status) }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <button
+              class="btn btn-primary btn-premium w-100"
+              (click)="analyzeSelectedTask()"
+              [disabled]="!selectedTaskId || analyzing">
+              {{ analyzing ? 'Analyse...' : 'Analyser' }}
+            </button>
+          </div>
+        </div>
+
+        @if (analysis) {
+          <div class="row g-4">
+            <div class="col-lg-4">
+              <div class="ai-analysis-box">
+                <h5 class="mb-3">Informations</h5>
+                <p><strong>Titre :</strong> {{ analysis.title }}</p>
+                <p><strong>Description :</strong> {{ analysis.description || 'Aucune description' }}</p>
+                <p><strong>Statut :</strong> {{ getStatusLabel(analysis.status) }}</p>
+                <p><strong>Priorité :</strong> {{ getPriorityLabel(analysis.priority) }}</p>
+                <p><strong>Date limite :</strong> {{ analysis.dueDate ? (analysis.dueDate | date:'medium') : '-' }}</p>
+                <p class="mb-0"><strong>Utilisateur assigné :</strong> {{ analysis.assignedUser || 'Non assigné' }}</p>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="ai-analysis-box">
+                <h5 class="mb-3">Scores et prédiction</h5>
+                <p><strong>Score de priorité :</strong> {{ formatScore(analysis.priorityScore) }}</p>
+                <p><strong>Score de risque :</strong> {{ formatScore(analysis.riskScore) }}</p>
+                <p><strong>Score combiné :</strong> {{ formatScore(analysis.combinedScore) }}</p>
+                <p><strong>Probabilité de retard :</strong> {{ formatScore(analysis.delayProbability) }}%</p>
+                <p><strong>Probabilité de complétion :</strong> {{ formatScore(analysis.completionProbability) }}%</p>
+                <p><strong>Confiance :</strong> {{ formatScore(analysis.confidenceScore) }}%</p>
+                <p><strong>Niveau de priorité :</strong> {{ getLevelLabel(analysis.priorityLevel) }}</p>
+                <p><strong>Niveau de risque :</strong> {{ getLevelLabel(analysis.riskLevel) }}</p>
+                <p class="mb-0">
+                  <strong>Complétion prédite :</strong>
+                  {{ analysis.predictedCompletionAt ? (analysis.predictedCompletionAt | date:'medium') : 'Non disponible' }}
+                </p>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="ai-analysis-box">
+                <h5 class="mb-3">Résumé</h5>
+                <p class="mb-0">{{ analysis.summary }}</p>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="ai-analysis-box">
+                <h5 class="mb-3">Raisons explicables</h5>
+
+                @if (analysis.reasons.length) {
+                  <ul class="mb-0 ps-3">
+                    @for (reason of analysis.reasons; track reason) {
+                      <li class="mb-2">{{ reason }}</li>
+                    }
+                  </ul>
+                } @else {
+                  <p class="mb-0">Aucune raison disponible.</p>
+                }
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div class="empty-state">
+            <i class="bi bi-cpu"></i>
+            <p class="mb-0">Sélectionne une tâche pour afficher son analyse IA.</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
