@@ -1,283 +1,413 @@
-<div align="center">
+# TaskAI Optimizer
 
-# 🤖 TaskAI Optimizer
+TaskAI Optimizer is a web-based task management application that combines conventional task management with an explainable decision-support engine.
 
-**AI-powered task management that tells you what to work on next and which tasks are about to slip.**
+The application evaluates task priority, deadline proximity, task status and user behaviour in order to estimate task risk, rank pending tasks and recommend which task should be addressed next.
 
-[![Java](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk\&logoColor=white)](https://www.java.com/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5-6DB33F?logo=springboot\&logoColor=white)](https://spring.io/projects/spring-boot)
-[![Angular](https://img.shields.io/badge/Angular-17-DD0031?logo=angular\&logoColor=white)](https://angular.dev/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql\&logoColor=white)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker\&logoColor=white)](https://www.docker.com/)
-[![JWT](https://img.shields.io/badge/Auth-JWT-000000?logo=jsonwebtokens\&logoColor=white)](https://jwt.io/)
-
-</div>
+The current intelligent engine is based on weighted business rules and statistical analysis of user behaviour. It is not based on a trained Machine Learning model. Advanced Machine Learning is planned as a future evolution of the project.
 
 ---
 
-## 📖 Overview
+## Table of Contents
 
-Traditional task-management tools such as Trello, Asana or Todoist are effective for organizing tasks, but they do not necessarily help users **decide what to work on first** or **anticipate potential delays**.
+* [Overview](#overview)
+* [Objectives](#objectives)
+* [Main Features](#main-features)
+* [Intelligent Decision Engine](#intelligent-decision-engine)
+* [Application Architecture](#application-architecture)
+* [Technology Stack](#technology-stack)
+* [Project Structure](#project-structure)
+* [Requirements](#requirements)
+* [Installation](#installation)
 
-**TaskAI Optimizer** adds an intelligent decision-support layer on top of classic task management.
+  * [Docker Deployment](#docker-deployment)
+  * [Local Development](#local-development)
+* [Configuration](#configuration)
+* [Authentication and Authorization](#authentication-and-authorization)
+* [API Reference](#api-reference)
+* [Database and Migrations](#database-and-migrations)
+* [Security](#security)
+* [Project Limitations](#project-limitations)
+* [Roadmap](#roadmap)
+* [Authors](#authors)
+* [Academic Context](#academic-context)
 
-For each task, the system evaluates:
+---
 
-* priority;
-* current status;
+## Overview
+
+Traditional task management applications mainly focus on creating, organizing and monitoring tasks.
+
+TaskAI Optimizer extends this approach by introducing an intelligent decision-support layer capable of analysing the current state of tasks and user behaviour.
+
+For each task, the system can evaluate:
+
+* task priority;
+* task status;
 * deadline proximity;
-* delay risk;
-* user behaviour;
+* assignment status;
+* static risk;
+* historical user performance;
 * estimated completion duration;
+* predicted completion date;
 * probability of delay;
-* predicted completion date.
+* confidence level.
 
-The system then ranks tasks, recommends the next task to work on and explains the reasoning behind each recommendation.
+The resulting information is used to rank tasks and generate recommendations.
 
-> **Important:** TaskAI Optimizer does not currently use a trained Machine Learning model. Its AI engine is based on transparent weighted rules combined with statistical user-behaviour analysis. Advanced Machine Learning is part of the project roadmap.
+The objective is not to replace the user in decision-making, but to provide a transparent mechanism that helps identify which task deserves attention first.
 
 ---
 
-## ✨ Features
+## Objectives
 
-### 🔐 Authentication & Authorization
+The main objectives of TaskAI Optimizer are:
 
-* JWT-based authentication.
-* User registration and login.
-* Password hashing.
-* Role-based access control.
-* Three roles:
+1. Provide a complete task management platform.
+2. Implement authentication and role-based authorization.
+3. Monitor task status, priority and deadlines.
+4. Analyse historical user behaviour.
+5. Estimate the risk associated with pending tasks.
+6. Predict potential completion delays.
+7. Rank tasks according to a combined priority and risk score.
+8. Provide explainable recommendations.
+9. Provide dashboards and analytics.
+10. Provide a containerized development and deployment environment.
 
-  * `ADMIN`
-  * `MANAGER`
-  * `USER`
-* `MANAGER` currently has notification-related access.
-* Task and AI features are currently available to `ADMIN` and `USER`.
+---
 
-### 📋 Task Management
+## Main Features
 
-* Create, read, update and delete tasks.
-* Task statuses:
+### Authentication and User Management
 
-  * `TODO`
-  * `IN_PROGRESS`
-  * `DONE`
-* Task priorities:
+The application provides:
 
-  * `LOW`
-  * `MEDIUM`
-  * `HIGH`
-* Deadline management.
-* Task assignment.
-* Automatic tracking of:
+* user registration;
+* user authentication;
+* JWT-based sessions;
+* password hashing;
+* role-based authorization;
+* user administration.
 
-  * start time;
-  * completion time;
-  * actual duration.
+Three roles are currently defined:
 
-### 🧠 AI Analysis
+| Role      | Description                              |
+| --------- | ---------------------------------------- |
+| `ADMIN`   | Full administrative access               |
+| `MANAGER` | Notification-related access              |
+| `USER`    | Task management and intelligent analysis |
 
-For each task, the AI engine can calculate:
+The exact permissions are enforced by the backend through Spring Security.
+
+---
+
+### Task Management
+
+Users can manage tasks containing information such as:
+
+* title;
+* description;
+* status;
+* priority;
+* deadline;
+* assigned user;
+* start date;
+* completion date;
+* actual completion duration.
+
+Available task statuses:
+
+```text
+TODO
+IN_PROGRESS
+DONE
+```
+
+Available priority levels:
+
+```text
+LOW
+MEDIUM
+HIGH
+```
+
+---
+
+### Intelligent Task Analysis
+
+The intelligent engine analyses individual tasks and calculates:
 
 * priority score;
-* static risk score;
+* static risk;
 * predictive risk;
+* final risk;
+* combined score;
+* risk level;
+* predicted completion date;
 * delay probability;
 * completion probability;
 * confidence level;
-* predicted completion date;
-* final combined score.
-
-### 🎯 Explainable Recommendations
-
-The system can:
-
-* identify the next best task;
-* rank open tasks;
-* provide a top-N recommendation list;
-* explain why a task has been recommended.
-
-Recommendations include a readable summary and a list of reasons generated in French.
-
-### 🔔 Smart Notifications
-
-The application provides notifications for task-related events, including intelligent alerts such as:
-
-* recommended action;
-* workload overload;
-* task creation;
-* task updates.
-
-### 📊 Analytics Dashboard
-
-The dashboard provides information about:
-
-* tasks by status;
-* high-priority tasks;
-* overdue tasks;
-* workload level;
-* current AI recommendation.
-
-### 👨‍💼 Administration
-
-Administrators can manage application users through the dedicated administration area.
-
-### 📝 Audit Trail
-
-Important task-related actions are recorded through an audit log.
-
-### 🐳 Dockerized Deployment
-
-The complete application can be started using Docker Compose with:
-
-* PostgreSQL;
-* Spring Boot backend;
-* Angular frontend;
-* nginx.
+* explanation of the result.
 
 ---
 
-## 🧠 How the AI Engine Works
+### Task Recommendations
 
-TaskAI Optimizer uses a transparent multi-step scoring and prediction pipeline.
+The application can:
 
-| Step | Component                    | Description                                                                                                                          |
-| ---- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 1    | `PriorityRules`              | Calculates a priority score from task priority, status and deadline proximity.                                                       |
-| 2    | `RiskRules`                  | Calculates a static risk score using deadline, status, priority and assignment information.                                          |
-| 3    | `UserBehaviorLearningEngine` | Builds a statistical profile from completed tasks, including average completion time, on-time rate, overdue rate and speed category. |
-| 4    | `PredictiveRiskEngine`       | Estimates completion duration, predicted completion date, delay probability and completion probability.                              |
-| 5    | `TaskScoringEngine`          | Combines priority and risk into a final score and classifies the task as `LOW`, `MEDIUM` or `HIGH`.                                  |
-| 6    | `TaskRankingEngine`          | Sorts open tasks according to their combined score.                                                                                  |
-| 7    | `TaskRecommendationEngine`   | Selects the most relevant task and generates top-N recommendations.                                                                  |
-| 8    | `ExplainabilityEngine`       | Converts calculated values into understandable summaries and reasons.                                                                |
+* identify the most relevant pending task;
+* rank pending tasks;
+* return a configurable number of recommendations;
+* explain the factors that influenced the recommendation.
 
-### Priority Score
+The recommendation system is designed to remain understandable rather than functioning as a black box.
 
-The priority score is calculated from:
+---
+
+### Notifications
+
+The notification module provides users with task-related information, including:
+
+* task events;
+* recommendations;
+* workload-related information;
+* updates.
+
+Notifications can be read individually or collectively.
+
+---
+
+### Analytics
+
+The application provides analytical information about task activity, including:
+
+* task distribution by status;
+* task priorities;
+* pending work;
+* completed work;
+* overdue tasks;
+* workload information.
+
+---
+
+### Administration
+
+Administrators have access to dedicated user-management functionality.
+
+Administrative operations are protected by backend authorization rules.
+
+---
+
+### Audit Logging
+
+The backend contains an audit mechanism for recording relevant application actions.
+
+---
+
+## Intelligent Decision Engine
+
+The intelligent module is implemented as a sequence of independent components.
 
 ```text
-Priority Score =
-    Priority Weight
-    + Status Weight
-    + Deadline Proximity Weight
+Task
+ │
+ ├── PriorityRules
+ │
+ ├── RiskRules
+ │
+ ├── UserBehaviorLearningEngine
+ │
+ ├── PredictiveRiskEngine
+ │
+ ├── TaskScoringEngine
+ │
+ ├── TaskRankingEngine
+ │
+ ├── TaskRecommendationEngine
+ │
+ └── ExplainabilityEngine
 ```
 
-The current priority weights are:
+### 1. Priority Analysis
 
-```text
-HIGH priority       = 50
-MEDIUM priority     = 30
-LOW priority        = 10
+The priority engine calculates a score based on:
 
-TODO                = 20
-IN_PROGRESS         = 10
+* task priority;
+* current status;
+* deadline proximity.
 
-Overdue             = 30
-Deadline < 1 day    = 25
-Deadline < 3 days   = 15
-Deadline < 7 days   = 5
-```
+Current weights are:
 
-### Static Risk
+| Factor                | Value |
+| --------------------- | ----: |
+| HIGH priority         |    50 |
+| MEDIUM priority       |    30 |
+| LOW priority          |    10 |
+| TODO                  |    20 |
+| IN_PROGRESS           |    10 |
+| Overdue               |    30 |
+| Deadline below 1 day  |    25 |
+| Deadline below 3 days |    15 |
+| Deadline below 7 days |     5 |
 
-The static risk combines deadline pressure, task state, priority and assignment information.
+The priority score is therefore based on the combination of these factors.
 
-Examples of deadline risk:
+---
 
-```text
-Overdue             = 60
-Deadline < 1 day    = 35
-Deadline < 3 days   = 20
-```
+### 2. Static Risk Analysis
 
-An additional risk is applied when a task is not assigned.
+The static risk engine evaluates factors such as:
 
-### User Behaviour Profile
+* deadline;
+* task status;
+* priority;
+* assignment.
 
-The `UserBehaviorLearningEngine` builds a profile using the user's completed tasks.
+Current deadline-related risk values include:
 
-The profile includes:
+| Condition             | Risk |
+| --------------------- | ---: |
+| Overdue               |   60 |
+| Deadline below 1 day  |   35 |
+| Deadline below 3 days |   20 |
+
+An additional risk contribution is applied when a task is not assigned.
+
+---
+
+### 3. User Behaviour Analysis
+
+The `UserBehaviorLearningEngine` analyses previously completed tasks.
+
+The user profile contains information such as:
 
 * average completion duration;
 * on-time completion rate;
-* overdue rate;
-* speed category.
+* overdue completion rate;
+* execution speed.
 
-Speed categories are currently defined as:
+The current speed categories are:
 
-```text
-FAST       <= 12 hours
-NORMAL     <= 36 hours
-SLOW       > 36 hours
-```
+| Category | Completion time |
+| -------- | --------------: |
+| FAST     |     <= 12 hours |
+| NORMAL   |     <= 36 hours |
+| SLOW     |      > 36 hours |
 
-### Predictive Risk
+This historical information is used by the predictive engine.
 
-The `PredictiveRiskEngine` estimates task duration using:
+---
+
+### 4. Predictive Risk
+
+The `PredictiveRiskEngine` estimates the expected completion duration using:
 
 ```text
 40% priority-based baseline
-60% user historical behaviour
+60% historical user behaviour
 ```
 
-The estimation is then adjusted according to task status and user speed.
+The result is adjusted according to the current task status and user speed.
 
-The engine derives:
+The engine can produce:
 
+* expected duration;
 * predicted completion date;
 * delay probability;
 * completion probability;
 * confidence level.
 
-Current confidence:
+The current confidence rules are:
 
 ```text
-At least 5 completed tasks = 82%
-Fewer than 5 completed tasks = 60%
+5 or more completed tasks: 82%
+Fewer than 5 completed tasks: 60%
 ```
 
-### Final Risk and Combined Score
-
-The final risk is calculated using:
-
-```text
-Risk = 55% Static Risk + 45% Predictive Risk
-```
-
-The final task score is:
-
-```text
-Combined Score = 65% Priority + 35% Risk
-```
-
-The resulting level is:
-
-```text
-HIGH    >= 70
-MEDIUM  >= 40
-LOW     < 40
-```
-
-This approach makes the current AI engine transparent and explainable while providing a foundation for future Machine Learning models.
+These values represent the current project rules and are not statistical confidence intervals produced by a trained Machine Learning model.
 
 ---
 
-## 🏗️ Architecture
+### 5. Final Risk
+
+The final risk combines static and predictive risk:
+
+```text
+Final Risk =
+    55% Static Risk
+    +
+    45% Predictive Risk
+```
+
+---
+
+### 6. Combined Task Score
+
+The final task score combines priority and risk:
+
+```text
+Combined Score =
+    65% Priority
+    +
+    35% Risk
+```
+
+The resulting classification is:
+
+| Score | Level  |
+| ----: | ------ |
+| >= 70 | HIGH   |
+| >= 40 | MEDIUM |
+|  < 40 | LOW    |
+
+---
+
+### 7. Ranking and Recommendations
+
+Tasks are ranked according to their combined score.
+
+The recommendation engine can then return:
+
+* the highest-ranked task;
+* a list of the top-ranked tasks;
+* the reasons behind the recommendation.
+
+---
+
+### 8. Explainability
+
+The system generates explanations based on the factors used during scoring.
+
+Examples of possible factors include:
+
+* approaching deadline;
+* high priority;
+* overdue status;
+* high predicted risk;
+* user historical performance;
+* task assignment status.
+
+This makes the current decision-support mechanism easier to understand and evaluate.
+
+---
+
+## Application Architecture
+
+TaskAI Optimizer follows a client-server architecture.
 
 ```mermaid
 flowchart LR
-    User([Browser])
+    Browser["Web Browser"]
 
-    subgraph Docker Compose
-        FE["Frontend<br/>Angular 17 + nginx<br/>:4200"]
-        BE["Backend<br/>Spring Boot 3.5<br/>:8080"]
-        DB[("PostgreSQL 16<br/>:5432")]
-    end
+    Frontend["Angular 17<br/>Frontend<br/>nginx :4200"]
 
-    User -- "Web application" --> FE
-    User -- "REST + JWT" --> BE
-    BE -- "JPA / Flyway" --> DB
+    Backend["Spring Boot 3.5<br/>REST API<br/>:8080"]
+
+    Database[("PostgreSQL 16<br/>:5432")]
+
+    Browser --> Frontend
+    Browser --> Backend
+    Backend --> Database
 ```
 
 ### Backend Architecture
@@ -285,73 +415,93 @@ flowchart LR
 The backend follows a layered architecture:
 
 ```text
-Controller
-    ↓
-Service
-    ↓
-Repository
-    ↓
-Entity
+REST Controller
+       |
+       v
+Service Layer
+       |
+       v
+Repository Layer
+       |
+       v
+Entity / Database
 ```
 
-The backend also uses:
+Additional backend components include:
 
 * DTOs;
 * mappers;
-* Spring Security;
-* JWT authentication;
-* role-based authorization;
-* global exception handling;
-* Flyway database migrations.
+* validation;
+* exception handling;
+* authentication;
+* authorization;
+* intelligent analysis engines;
+* database migrations.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
-| Layer    | Technologies                                                                                                         |
-| -------- | -------------------------------------------------------------------------------------------------------------------- |
-| Frontend | Angular 17, Standalone Components, Bootstrap 5, Bootstrap Icons, Chart.js, ng2-charts, ngx-toastr, SweetAlert2, RxJS |
-| Backend  | Java 17, Spring Boot 3.5, Spring Web, Spring Data JPA, Spring Security, Bean Validation, Lombok                      |
-| Security | JWT, stateless authentication, role-based authorization, password hashing                                            |
-| Database | PostgreSQL 16, Flyway migrations                                                                                     |
-| DevOps   | Docker, Docker Compose, multi-stage builds, nginx                                                                    |
+### Frontend
+
+* Angular 17
+* Angular Standalone Components
+* Bootstrap 5
+* Bootstrap Icons
+* Chart.js
+* ng2-charts
+* ngx-toastr
+* SweetAlert2
+* RxJS
+
+### Backend
+
+* Java 17
+* Spring Boot 3.5
+* Spring Web
+* Spring Data JPA
+* Spring Security
+* Jakarta Validation
+* Lombok
+* JJWT
+
+### Database
+
+* PostgreSQL 16
+* Flyway
+
+### Infrastructure
+
+* Docker
+* Docker Compose
+* nginx
+* Multi-stage Docker builds
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 taskai-optimizer/
 │
-├── docker-compose.yml
 ├── .env.example
 ├── .gitignore
+├── docker-compose.yml
+├── README.md
 │
 ├── taskai-backend/
 │   ├── Dockerfile
 │   ├── pom.xml
+│   │
 │   └── src/
 │       ├── main/
-│       │   ├── java/com/taskai/optimizer/
-│       │   │   ├── ai/
-│       │   │   │   ├── engine/
-│       │   │   │   ├── model/
-│       │   │   │   └── rules/
-│       │   │   ├── config/
-│       │   │   ├── controller/
-│       │   │   ├── dto/
-│       │   │   ├── entity/
-│       │   │   ├── enums/
-│       │   │   ├── exception/
-│       │   │   ├── mapper/
-│       │   │   ├── repository/
-│       │   │   ├── security/
-│       │   │   ├── services/
-│       │   │   └── util/
+│       │   ├── java/
+│       │   │   └── ...
 │       │   │
 │       │   └── resources/
 │       │       ├── application.properties
-│       │       └── db/migration/
+│       │       └── db/
+│       │           └── migration/
 │       │
 │       └── test/
 │
@@ -359,6 +509,7 @@ taskai-optimizer/
     ├── Dockerfile
     ├── nginx.conf
     ├── package.json
+    │
     └── src/
         └── app/
             ├── core/
@@ -370,21 +521,39 @@ taskai-optimizer/
             │   ├── dashboard/
             │   ├── notifications/
             │   └── tasks/
+            │
             └── layout/
 ```
 
 ---
 
-## 🚀 Getting Started
+## Requirements
 
-## Option 1 — Docker (Recommended)
+### Docker deployment
 
-### Prerequisites
+Recommended requirements:
 
-You need:
+* Git
+* Docker Desktop
+* Docker Compose v2
 
-* Git;
-* Docker Desktop with Docker Compose v2.
+### Local development
+
+For development without Docker:
+
+* Java 17
+* Maven Wrapper included in the project
+* Node.js 18.13+ or a compatible modern Node.js version
+* npm
+* PostgreSQL 16
+
+---
+
+# Installation
+
+## Docker Deployment
+
+Docker Compose is the recommended way to run the complete application.
 
 ### 1. Clone the repository
 
@@ -401,7 +570,13 @@ cd taskai-optimizer
 copy .env.example .env
 ```
 
-#### PowerShell / Linux / macOS
+#### PowerShell
+
+```powershell
+Copy-Item .env.example .env
+```
+
+#### Linux / macOS
 
 ```bash
 cp .env.example .env
@@ -409,23 +584,21 @@ cp .env.example .env
 
 ### 3. Configure `.env`
 
-Open `.env` and configure your local values:
+Example:
 
 ```env
 POSTGRES_DB=taskai_optimizer_db
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=choose_a_strong_password
+POSTGRES_PASSWORD=change_me
 
 SERVER_PORT=8080
 SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
-APP_JWT_SECRET=replace_with_a_long_random_secret_at_least_32_characters
+APP_JWT_SECRET=change_me_to_a_long_random_secret_at_least_32_characters
 APP_JWT_EXPIRATION=86400000
 ```
 
-> ⚠️ Never commit `.env` to GitHub. The `.env` file is excluded by `.gitignore`.
-
-Docker Compose automatically loads `.env` and passes the required values to the containers.
+The `.env` file is intended for local configuration and must not be committed to the repository.
 
 ### 4. Start the application
 
@@ -433,9 +606,9 @@ Docker Compose automatically loads `.env` and passes the required values to the 
 docker compose up --build
 ```
 
-The application will start the three services:
+The application will expose:
 
-| Service     | URL                       |
+| Component   | Address                   |
 | ----------- | ------------------------- |
 | Frontend    | http://localhost:4200     |
 | Backend API | http://localhost:8080/api |
@@ -447,57 +620,53 @@ The application will start the three services:
 docker compose down
 ```
 
-To stop the containers and delete the PostgreSQL volume:
+To remove the database volume as well:
 
 ```bash
 docker compose down -v
 ```
 
-> ⚠️ Removing the volume permanently deletes the local database data.
+Removing the volume deletes the local PostgreSQL data.
 
 ---
 
-## Option 2 — Run Without Docker
-
-### Prerequisites
-
-* Java 17;
-* Node.js 18.13+ or 20+;
-* PostgreSQL 16.
-
-Create a PostgreSQL database named:
-
-```text
-taskai_optimizer_db
-```
-
-Configure the required database and JWT environment variables before starting the backend.
-
-> Tip: Docker can still be used to run only PostgreSQL:
->
-> ```bash
-> docker compose up postgres
-> ```
+## Local Development
 
 ### Backend
 
-#### Windows
-
-```cmd
-cd taskai-backend
-mvnw.cmd spring-boot:run
-```
-
-#### Linux / macOS
+From the project root:
 
 ```bash
 cd taskai-backend
+```
+
+On Windows:
+
+```cmd
+mvnw.cmd spring-boot:run
+```
+
+On Linux/macOS:
+
+```bash
 ./mvnw spring-boot:run
 ```
 
-Flyway applies the database migrations during application startup.
+The backend starts by default on:
+
+```text
+http://localhost:8080
+```
+
+The REST API is available under:
+
+```text
+http://localhost:8080/api
+```
 
 ### Frontend
+
+From the project root:
 
 ```bash
 cd taskai-frontend
@@ -505,113 +674,165 @@ npm install --legacy-peer-deps
 npm start
 ```
 
-The frontend uses the following API URL by default:
-
-```text
-http://localhost:8080/api
-```
-
-The API URL can be configured through:
-
-```text
-taskai-frontend/src/environments/environment.ts
-```
-
----
-
-## 👤 Default Administrator
-
-For development and demonstration purposes, the application initializes an administrator account:
-
-| Field    | Value             |
-| -------- | ----------------- |
-| Email    | `admin@gmail.com` |
-| Password | `admin123`        |
-| Role     | `ADMIN`           |
-
-> ⚠️ This account is intended for demonstration/development only. Change or remove the default credentials before any real deployment.
-
----
-
-## ⚙️ Configuration
-
-| Variable                        | Required | Default                                                | Description                  |
-| ------------------------------- | -------: | ------------------------------------------------------ | ---------------------------- |
-| `POSTGRES_DB`                   |      Yes | —                                                      | PostgreSQL database name     |
-| `POSTGRES_USER`                 |      Yes | —                                                      | PostgreSQL username          |
-| `POSTGRES_PASSWORD`             |      Yes | —                                                      | PostgreSQL password          |
-| `APP_JWT_SECRET`                |      Yes | —                                                      | JWT signing key              |
-| `APP_JWT_EXPIRATION`            |       No | `86400000`                                             | JWT lifetime in milliseconds |
-| `SPRING_DATASOURCE_URL`         |       No | `jdbc:postgresql://localhost:5432/taskai_optimizer_db` | JDBC database URL            |
-| `SPRING_DATASOURCE_USERNAME`    |       No | `postgres`                                             | Database username            |
-| `SPRING_DATASOURCE_PASSWORD`    |       No | —                                                      | Database password            |
-| `SPRING_JPA_HIBERNATE_DDL_AUTO` |       No | `none`                                                 | Hibernate schema mode        |
-| `SERVER_PORT`                   |       No | `8080`                                                 | Backend server port          |
-
-### CORS
-
-The backend currently allows:
+The Angular application is available at:
 
 ```text
 http://localhost:4200
 ```
 
-The CORS configuration can be found in:
+---
 
-```text
-taskai-backend/src/main/java/com/taskai/optimizer/config/CorsConfig.java
+## Configuration
+
+The backend reads its configuration through environment variables.
+
+| Variable                        | Required | Default                                                | Description                      |
+| ------------------------------- | -------- | ------------------------------------------------------ | -------------------------------- |
+| `POSTGRES_DB`                   | Yes      | —                                                      | PostgreSQL database name         |
+| `POSTGRES_USER`                 | Yes      | —                                                      | PostgreSQL username              |
+| `POSTGRES_PASSWORD`             | Yes      | —                                                      | PostgreSQL password              |
+| `APP_JWT_SECRET`                | Yes      | —                                                      | JWT signing secret               |
+| `APP_JWT_EXPIRATION`            | No       | `86400000`                                             | JWT expiration in milliseconds   |
+| `SPRING_DATASOURCE_URL`         | No       | `jdbc:postgresql://localhost:5432/taskai_optimizer_db` | PostgreSQL JDBC URL              |
+| `SPRING_DATASOURCE_USERNAME`    | No       | `postgres`                                             | PostgreSQL username              |
+| `SPRING_DATASOURCE_PASSWORD`    | No       | —                                                      | PostgreSQL password              |
+| `SPRING_JPA_HIBERNATE_DDL_AUTO` | No       | `none`                                                 | Hibernate schema generation mode |
+| `SERVER_PORT`                   | No       | `8080`                                                 | Spring Boot HTTP port            |
+
+### Example `.env.example`
+
+The repository should contain only placeholder values:
+
+```env
+POSTGRES_DB=taskai_optimizer_db
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=change_me
+
+SERVER_PORT=8080
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+APP_JWT_SECRET=change_me_to_a_long_random_secret_at_least_32_characters
+APP_JWT_EXPIRATION=86400000
 ```
 
-If the frontend is deployed to another domain, update the allowed origin accordingly.
+The real `.env` file should remain local.
 
 ---
 
-## 🔌 API Reference
+## Default Administrator Account
 
-All protected endpoints require:
+For development and demonstration purposes, the project provides a default administrator account:
+
+```text
+Email:    admin@gmail.com
+Password: admin123
+Role:     ADMIN
+```
+
+This account is intended only for demonstration or local development.
+
+For any real deployment, the default credentials must be changed or removed.
+
+---
+
+# Authentication and Authorization
+
+The application uses JWT-based stateless authentication.
+
+The general authentication flow is:
+
+```text
+User
+ |
+ | Login
+ v
+Authentication API
+ |
+ | JWT
+ v
+Frontend
+ |
+ | Authorization: Bearer <token>
+ v
+Protected API
+ |
+ v
+Spring Security
+ |
+ v
+Authorized Resource
+```
+
+Authorization is enforced by the backend.
+
+The frontend also uses route guards to prevent unauthorized navigation, but frontend protection is not considered a replacement for backend authorization.
+
+---
+
+# API Reference
+
+The backend exposes a REST API under:
+
+```text
+/api
+```
+
+Protected endpoints require:
 
 ```http
 Authorization: Bearer <JWT_TOKEN>
 ```
 
-### Authentication
+## Authentication
 
 | Method | Endpoint             | Access |
 | ------ | -------------------- | ------ |
-| `POST` | `/api/auth/register` | Public |
-| `POST` | `/api/auth/login`    | Public |
+| POST   | `/api/auth/register` | Public |
+| POST   | `/api/auth/login`    | Public |
 
-### Tasks
+---
 
-| Method   | Endpoint          | Access          |
-| -------- | ----------------- | --------------- |
-| `POST`   | `/api/tasks`      | `ADMIN`, `USER` |
-| `GET`    | `/api/tasks`      | `ADMIN`, `USER` |
-| `GET`    | `/api/tasks/{id}` | `ADMIN`, `USER` |
-| `PUT`    | `/api/tasks/{id}` | `ADMIN`, `USER` |
-| `DELETE` | `/api/tasks/{id}` | `ADMIN`         |
+## Tasks
 
-### Users
+| Method | Endpoint          | Access          |
+| ------ | ----------------- | --------------- |
+| POST   | `/api/tasks`      | `ADMIN`, `USER` |
+| GET    | `/api/tasks`      | `ADMIN`, `USER` |
+| GET    | `/api/tasks/{id}` | `ADMIN`, `USER` |
+| PUT    | `/api/tasks/{id}` | `ADMIN`, `USER` |
+| DELETE | `/api/tasks/{id}` | `ADMIN`         |
 
-| Method   | Endpoint          | Access  |
-| -------- | ----------------- | ------- |
-| `GET`    | `/api/users`      | `ADMIN` |
-| `POST`   | `/api/users`      | `ADMIN` |
-| `GET`    | `/api/users/{id}` | `ADMIN` |
-| `PUT`    | `/api/users/{id}` | `ADMIN` |
-| `DELETE` | `/api/users/{id}` | `ADMIN` |
+---
 
-### AI
+## Users
 
-| Method | Endpoint                                | Description                   |
-| ------ | --------------------------------------- | ----------------------------- |
-| `GET`  | `/api/ai/tasks/{id}/analyze`            | Analyze a task                |
-| `GET`  | `/api/ai/tasks/recommendation`          | Get the next recommended task |
-| `GET`  | `/api/ai/tasks/recommendations?limit=5` | Get top-N recommendations     |
+| Method | Endpoint          | Access  |
+| ------ | ----------------- | ------- |
+| GET    | `/api/users`      | `ADMIN` |
+| GET    | `/api/users/{id}` | `ADMIN` |
+| POST   | `/api/users`      | `ADMIN` |
+| PUT    | `/api/users/{id}` | `ADMIN` |
+| DELETE | `/api/users/{id}` | `ADMIN` |
 
-The recommendation endpoint supports a maximum of 10 results.
+---
 
-### Analytics
+## Artificial Intelligence
+
+| Method | Endpoint                                | Description                    |
+| ------ | --------------------------------------- | ------------------------------ |
+| GET    | `/api/ai/tasks/{id}/analyze`            | Analyse a task                 |
+| GET    | `/api/ai/tasks/recommendation`          | Return the recommended task    |
+| GET    | `/api/ai/tasks/recommendations?limit=5` | Return the top recommendations |
+
+The recommendation limit is configurable within the supported range of the backend.
+
+---
+
+## Analytics
+
+The analytics module provides task-related statistics through dedicated endpoints.
+
+Example:
 
 ```text
 GET /api/analytics/tasks
@@ -619,22 +840,24 @@ GET /api/analytics/my-tasks
 GET /api/analytics/dashboard
 ```
 
-### Notifications
+---
 
-| Method   | Endpoint                          | Access                     |
-| -------- | --------------------------------- | -------------------------- |
-| `GET`    | `/api/notifications`              | `ADMIN`, `USER`, `MANAGER` |
-| `GET`    | `/api/notifications/unread-count` | `ADMIN`, `USER`, `MANAGER` |
-| `PUT`    | `/api/notifications/{id}/read`    | `ADMIN`, `USER`, `MANAGER` |
-| `PUT`    | `/api/notifications/read-all`     | `ADMIN`, `USER`, `MANAGER` |
-| `DELETE` | `/api/notifications/{id}`         | `ADMIN`, `USER`, `MANAGER` |
-| `POST`   | `/api/notifications`              | `ADMIN`                    |
+## Notifications
+
+| Method | Endpoint                          | Access                     |
+| ------ | --------------------------------- | -------------------------- |
+| GET    | `/api/notifications`              | `ADMIN`, `USER`, `MANAGER` |
+| GET    | `/api/notifications/unread-count` | `ADMIN`, `USER`, `MANAGER` |
+| PUT    | `/api/notifications/{id}/read`    | `ADMIN`, `USER`, `MANAGER` |
+| PUT    | `/api/notifications/read-all`     | `ADMIN`, `USER`, `MANAGER` |
+| DELETE | `/api/notifications/{id}`         | `ADMIN`, `USER`, `MANAGER` |
+| POST   | `/api/notifications`              | `ADMIN`                    |
 
 ---
 
-## 🧪 API Example
+# API Usage Example
 
-### Login
+## Login
 
 ```bash
 curl -X POST http://localhost:8080/api/auth/login \
@@ -642,16 +865,16 @@ curl -X POST http://localhost:8080/api/auth/login \
   -d '{"email":"admin@gmail.com","password":"admin123"}'
 ```
 
-The response contains a JWT token.
+The authentication response provides a JWT token.
 
-### Request the next recommended task
+## Request Task Recommendation
 
 ```bash
 curl http://localhost:8080/api/ai/tasks/recommendation \
   -H "Authorization: Bearer <JWT_TOKEN>"
 ```
 
-### Request top-N recommendations
+## Request Multiple Recommendations
 
 ```bash
 curl "http://localhost:8080/api/ai/tasks/recommendations?limit=5" \
@@ -660,104 +883,200 @@ curl "http://localhost:8080/api/ai/tasks/recommendations?limit=5" \
 
 ---
 
-## 🔒 Security
+# Database and Migrations
 
-TaskAI Optimizer implements several security mechanisms:
+The application uses PostgreSQL 16 as its relational database.
 
-* **JWT authentication** using stateless sessions.
-* JWT tokens are sent through the `Authorization: Bearer` header.
-* JWT expiration is configurable.
-* **Role-based authorization** using Spring Security and `@PreAuthorize`.
-* Frontend route protection using Angular guards.
-* Password hashing instead of plaintext password storage.
-* Sensitive configuration values are provided through environment variables.
-* `.env` is excluded from Git through `.gitignore`.
-* Only `.env.example` with placeholder values is committed.
-* CORS is restricted to the configured frontend origin.
+Database schema evolution is handled through Flyway.
 
-### Security recommendations
+Migration files are located under:
 
-Before a real deployment:
+```text
+taskai-backend/src/main/resources/db/migration/
+```
 
-* replace the default administrator credentials;
-* use a strong random JWT secret;
-* use a strong PostgreSQL password;
-* configure HTTPS;
-* configure the production frontend origin in CORS;
-* avoid exposing database ports publicly;
-* review authorization rules before production deployment.
+Flyway applies migrations automatically when the Spring Boot application starts.
 
-> ⚠️ The project is an academic/development application and should undergo additional security review before production use.
+The project uses migrations to maintain a controlled and reproducible database schema.
 
 ---
 
-## 🖼️ Screenshots
+# Security
 
-Screenshots can be stored in:
+The project implements several security mechanisms:
+
+* JWT authentication;
+* stateless sessions;
+* Spring Security;
+* role-based authorization;
+* method-level authorization;
+* password hashing;
+* frontend route guards;
+* environment-based secrets;
+* Git exclusion of `.env`;
+* restricted CORS configuration.
+
+Sensitive values should never be stored directly in source code.
+
+The repository therefore uses:
+
+```text
+.env
+```
+
+for local secrets and:
+
+```text
+.env.example
+```
+
+for documented placeholders.
+
+The `.env` file is excluded through `.gitignore`.
+
+---
+
+## Production Security Considerations
+
+Before deploying the application in a production environment, the following points should be addressed:
+
+* replace the default administrator credentials;
+* generate a strong random JWT secret;
+* use HTTPS;
+* configure a production frontend origin;
+* review CORS configuration;
+* restrict database network access;
+* review all role-based authorization rules;
+* configure secure database credentials;
+* avoid exposing PostgreSQL directly to the public network;
+* perform a complete application security audit.
+
+TaskAI Optimizer is an academic project and should not be considered production-ready without additional security validation.
+
+---
+
+# Project Limitations
+
+The current version has several intentional limitations.
+
+### Intelligent engine
+
+The current AI engine is rule-based and statistical.
+
+It does not currently contain:
+
+* a trained Machine Learning model;
+* neural networks;
+* reinforcement learning;
+* automated model training;
+* large-scale historical datasets.
+
+The current implementation provides a foundation for future Machine Learning experimentation.
+
+### Prediction accuracy
+
+Prediction quality depends on the amount and quality of historical task data available for each user.
+
+Users with limited task history receive less personalized predictions.
+
+### Deployment
+
+The current configuration is primarily designed for local development and academic demonstration.
+
+Production deployment requires additional infrastructure and security configuration.
+
+---
+
+# Roadmap
+
+Future development may include:
+
+* [ ] Advanced Machine Learning for completion-time prediction
+* [ ] Automated model training
+* [ ] Model evaluation and comparison
+* [ ] Hyperparameter optimization
+* [ ] Improved delay prediction
+* [ ] Advanced workload optimization
+* [ ] Team collaboration
+* [ ] Shared projects
+* [ ] Intelligent task assignment
+* [ ] Mobile application
+* [ ] OpenAPI / Swagger documentation
+* [ ] Advanced monitoring and observability
+* [ ] Production deployment configuration
+
+---
+
+# Screenshots
+
+Screenshots can be added to:
 
 ```text
 docs/screenshots/
 ```
 
-Recommended screenshots include:
+Recommended screenshots:
 
-* Dashboard;
-* Task list;
-* Task details;
-* AI Insights;
-* Analytics;
-* Notifications;
-* Administration.
+```text
+docs/
+└── screenshots/
+    ├── login.png
+    ├── dashboard.png
+    ├── tasks.png
+    ├── task-details.png
+    ├── ai-insights.png
+    ├── analytics.png
+    ├── notifications.png
+    └── administration.png
+```
 
 Example:
 
 ```markdown
-![Dashboard](docs/screenshots/dashboard.png)
+![TaskAI Optimizer Dashboard](docs/screenshots/dashboard.png)
 ```
 
 ---
 
-## 🗺️ Roadmap
+# Repository
 
-The current rule-based AI engine provides a foundation for future improvements.
+Source code:
 
-* [ ] Advanced Machine Learning models for delay prediction
-* [ ] Model training and evaluation
-* [ ] Hyperparameter tuning
-* [ ] Improved prediction accuracy
-* [ ] Team collaboration
-* [ ] Shared projects
-* [ ] Advanced task assignment optimization
-* [ ] Mobile application for iOS / Android
-* [ ] Interactive OpenAPI / Swagger documentation
-* [ ] Advanced workload optimization
+https://github.com/aziz11414/taskai-optimizer
 
 ---
 
-## 👥 Authors
+# Authors
 
-* **Mohamed Aziz Hammami** — [@aziz11414](https://github.com/aziz11414)
-* **Houssem Soltani**
+**Mohamed Aziz Hammami**
+GitHub: https://github.com/aziz11414
+
+**Houssem Soltani**
 
 ---
 
-## 🎓 Academic Project
+# Academic Context
 
-**TaskAI Optimizer — 2026**
+**TaskAI Optimizer** was developed as a final-year academic project in 2026.
 
-Final-year academic project focused on:
+The project combines:
 
-* intelligent task management;
-* explainable task recommendations;
+* web application development;
+* software architecture;
+* task management;
+* authentication and authorization;
+* database management;
+* statistical user behaviour analysis;
+* explainable decision support;
 * predictive task-risk analysis;
-* user behaviour analysis;
-* modern web application architecture;
-* containerized deployment.
+* containerized application deployment.
+
+The project is intended to demonstrate the design and implementation of a complete modern web application while exploring the integration of intelligent decision-support mechanisms into task management.
 
 ---
 
-<div align="center">
+# License
 
-**Built with Angular, Spring Boot, PostgreSQL and Docker.**
+This project was developed for academic purposes.
 
-</div>
+If the project is later distributed publicly under a specific open-source license, this section should be updated accordingly.
