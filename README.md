@@ -4,7 +4,7 @@ TaskAI Optimizer is a web-based task management application that combines conven
 
 The application evaluates task priority, deadline proximity, task status and user behaviour in order to estimate task risk, rank pending tasks and recommend which task should be addressed next.
 
-The current intelligent engine is based on weighted business rules and statistical analysis of user behaviour. It is not based on a trained Machine Learning model. Advanced Machine Learning is planned as a future evolution of the project.
+The current intelligent engine is based on weighted business rules and statistical analysis of user behaviour. It is **not based on a trained Machine Learning model**. Advanced Machine Learning is planned as a future evolution of the project.
 
 ---
 
@@ -27,10 +27,12 @@ The current intelligent engine is based on weighted business rules and statistic
 * [API Reference](#api-reference)
 * [Database and Migrations](#database-and-migrations)
 * [Security](#security)
+* [Screenshots](#screenshots)
 * [Project Limitations](#project-limitations)
 * [Roadmap](#roadmap)
 * [Authors](#authors)
 * [Academic Context](#academic-context)
+* [License](#license)
 
 ---
 
@@ -76,9 +78,9 @@ The main objectives of TaskAI Optimizer are:
 
 ---
 
-## Main Features
+# Main Features
 
-### Authentication and User Management
+## Authentication and User Management
 
 The application provides:
 
@@ -101,7 +103,7 @@ The exact permissions are enforced by the backend through Spring Security.
 
 ---
 
-### Task Management
+## Task Management
 
 Users can manage tasks containing information such as:
 
@@ -133,7 +135,7 @@ HIGH
 
 ---
 
-### Intelligent Task Analysis
+## Intelligent Task Analysis
 
 The intelligent engine analyses individual tasks and calculates:
 
@@ -151,7 +153,7 @@ The intelligent engine analyses individual tasks and calculates:
 
 ---
 
-### Task Recommendations
+## Task Recommendations
 
 The application can:
 
@@ -164,7 +166,7 @@ The recommendation system is designed to remain understandable rather than funct
 
 ---
 
-### Notifications
+## Notifications
 
 The notification module provides users with task-related information, including:
 
@@ -177,7 +179,7 @@ Notifications can be read individually or collectively.
 
 ---
 
-### Analytics
+## Analytics
 
 The application provides analytical information about task activity, including:
 
@@ -190,7 +192,7 @@ The application provides analytical information about task activity, including:
 
 ---
 
-### Administration
+## Administration
 
 Administrators have access to dedicated user-management functionality.
 
@@ -198,13 +200,13 @@ Administrative operations are protected by backend authorization rules.
 
 ---
 
-### Audit Logging
+## Audit Logging
 
 The backend contains an audit mechanism for recording relevant application actions.
 
 ---
 
-## Intelligent Decision Engine
+# Intelligent Decision Engine
 
 The intelligent module is implemented as a sequence of independent components.
 
@@ -228,7 +230,7 @@ Task
  └── ExplainabilityEngine
 ```
 
-### 1. Priority Analysis
+## 1. Priority Analysis
 
 The priority engine calculates a score based on:
 
@@ -254,7 +256,7 @@ The priority score is therefore based on the combination of these factors.
 
 ---
 
-### 2. Static Risk Analysis
+## 2. Static Risk Analysis
 
 The static risk engine evaluates factors such as:
 
@@ -275,7 +277,7 @@ An additional risk contribution is applied when a task is not assigned.
 
 ---
 
-### 3. User Behaviour Analysis
+## 3. User Behaviour Analysis
 
 The `UserBehaviorLearningEngine` analyses previously completed tasks.
 
@@ -298,7 +300,7 @@ This historical information is used by the predictive engine.
 
 ---
 
-### 4. Predictive Risk
+## 4. Predictive Risk
 
 The `PredictiveRiskEngine` estimates the expected completion duration using:
 
@@ -324,11 +326,11 @@ The current confidence rules are:
 Fewer than 5 completed tasks: 60%
 ```
 
-These values represent the current project rules and are not statistical confidence intervals produced by a trained Machine Learning model.
+These values represent the current project rules and are **not statistical confidence intervals produced by a trained Machine Learning model**.
 
 ---
 
-### 5. Final Risk
+## 5. Final Risk
 
 The final risk combines static and predictive risk:
 
@@ -341,7 +343,7 @@ Final Risk =
 
 ---
 
-### 6. Combined Task Score
+## 6. Combined Task Score
 
 The final task score combines priority and risk:
 
@@ -362,7 +364,7 @@ The resulting classification is:
 
 ---
 
-### 7. Ranking and Recommendations
+## 7. Ranking and Recommendations
 
 Tasks are ranked according to their combined score.
 
@@ -374,7 +376,7 @@ The recommendation engine can then return:
 
 ---
 
-### 8. Explainability
+## 8. Explainability
 
 The system generates explanations based on the factors used during scoring.
 
@@ -391,7 +393,7 @@ This makes the current decision-support mechanism easier to understand and evalu
 
 ---
 
-## Application Architecture
+# Application Architecture
 
 TaskAI Optimizer follows a client-server architecture.
 
@@ -410,7 +412,7 @@ flowchart LR
     Backend --> Database
 ```
 
-### Backend Architecture
+## Backend Architecture
 
 The backend follows a layered architecture:
 
@@ -440,9 +442,9 @@ Additional backend components include:
 
 ---
 
-## Technology Stack
+# Technology Stack
 
-### Frontend
+## Frontend
 
 * Angular 17
 * Angular Standalone Components
@@ -454,7 +456,7 @@ Additional backend components include:
 * SweetAlert2
 * RxJS
 
-### Backend
+## Backend
 
 * Java 17
 * Spring Boot 3.5
@@ -465,12 +467,12 @@ Additional backend components include:
 * Lombok
 * JJWT
 
-### Database
+## Database
 
 * PostgreSQL 16
 * Flyway
 
-### Infrastructure
+## Infrastructure
 
 * Docker
 * Docker Compose
@@ -479,7 +481,7 @@ Additional backend components include:
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```text
 taskai-optimizer/
@@ -488,6 +490,14 @@ taskai-optimizer/
 ├── .gitignore
 ├── docker-compose.yml
 ├── README.md
+│
+├── docs/
+│   └── screenshots/
+│       ├── login.png
+│       ├── dashboard.png
+│       ├── tasks.png
+│       ├── ai-insights.png
+│       └── administration.png
 │
 ├── taskai-backend/
 │   ├── Dockerfile
@@ -527,9 +537,9 @@ taskai-optimizer/
 
 ---
 
-## Requirements
+# Requirements
 
-### Docker deployment
+## Docker Deployment
 
 Recommended requirements:
 
@@ -537,7 +547,7 @@ Recommended requirements:
 * Docker Desktop
 * Docker Compose v2
 
-### Local development
+## Local Development
 
 For development without Docker:
 
@@ -598,7 +608,7 @@ APP_JWT_SECRET=change_me_to_a_long_random_secret_at_least_32_characters
 APP_JWT_EXPIRATION=86400000
 ```
 
-The `.env` file is intended for local configuration and must not be committed to the repository.
+The `.env` file is intended for local configuration and **must not be committed to the repository**.
 
 ### 4. Start the application
 
@@ -608,11 +618,11 @@ docker compose up --build
 
 The application will expose:
 
-| Component   | Address                   |
-| ----------- | ------------------------- |
-| Frontend    | http://localhost:4200     |
-| Backend API | http://localhost:8080/api |
-| PostgreSQL  | localhost:5432            |
+| Component   | Address                     |
+| ----------- | --------------------------- |
+| Frontend    | `http://localhost:4200`     |
+| Backend API | `http://localhost:8080/api` |
+| PostgreSQL  | `localhost:5432`            |
 
 ### 5. Stop the application
 
@@ -626,13 +636,13 @@ To remove the database volume as well:
 docker compose down -v
 ```
 
-Removing the volume deletes the local PostgreSQL data.
+> Removing the volume deletes the local PostgreSQL data.
 
 ---
 
-## Local Development
+# Local Development
 
-### Backend
+## Backend
 
 From the project root:
 
@@ -640,13 +650,13 @@ From the project root:
 cd taskai-backend
 ```
 
-On Windows:
+### Windows
 
 ```cmd
 mvnw.cmd spring-boot:run
 ```
 
-On Linux/macOS:
+### Linux / macOS
 
 ```bash
 ./mvnw spring-boot:run
@@ -664,7 +674,9 @@ The REST API is available under:
 http://localhost:8080/api
 ```
 
-### Frontend
+---
+
+## Frontend
 
 From the project root:
 
@@ -682,7 +694,7 @@ http://localhost:4200
 
 ---
 
-## Configuration
+# Configuration
 
 The backend reads its configuration through environment variables.
 
@@ -699,7 +711,7 @@ The backend reads its configuration through environment variables.
 | `SPRING_JPA_HIBERNATE_DDL_AUTO` | No       | `none`                                                 | Hibernate schema generation mode |
 | `SERVER_PORT`                   | No       | `8080`                                                 | Spring Boot HTTP port            |
 
-### Example `.env.example`
+## Example `.env.example`
 
 The repository should contain only placeholder values:
 
@@ -719,7 +731,7 @@ The real `.env` file should remain local.
 
 ---
 
-## Default Administrator Account
+# Default Administrator Account
 
 For development and demonstration purposes, the project provides a default administrator account:
 
@@ -765,7 +777,7 @@ Authorized Resource
 
 Authorization is enforced by the backend.
 
-The frontend also uses route guards to prevent unauthorized navigation, but frontend protection is not considered a replacement for backend authorization.
+The frontend also uses route guards to prevent unauthorized navigation, but frontend protection is **not considered a replacement for backend authorization**.
 
 ---
 
@@ -832,7 +844,7 @@ The recommendation limit is configurable within the supported range of the backe
 
 The analytics module provides task-related statistics through dedicated endpoints.
 
-Example:
+Examples:
 
 ```text
 GET /api/analytics/tasks
@@ -955,11 +967,35 @@ TaskAI Optimizer is an academic project and should not be considered production-
 
 ---
 
+# Screenshots
+
+## Login
+
+![TaskAI Optimizer Login](docs/screenshots/login.png)
+
+## Dashboard
+
+![TaskAI Optimizer Dashboard](docs/screenshots/dashboard.png)
+
+## Task Management
+
+![TaskAI Optimizer Task Management](docs/screenshots/tasks.png)
+
+## AI Insights
+
+![TaskAI Optimizer AI Insights](docs/screenshots/ai-insights.png)
+
+## Administration
+
+![TaskAI Optimizer Administration](docs/screenshots/administration.png)
+
+---
+
 # Project Limitations
 
 The current version has several intentional limitations.
 
-### Intelligent engine
+## Intelligent Engine
 
 The current AI engine is rule-based and statistical.
 
@@ -973,13 +1009,13 @@ It does not currently contain:
 
 The current implementation provides a foundation for future Machine Learning experimentation.
 
-### Prediction accuracy
+## Prediction Accuracy
 
 Prediction quality depends on the amount and quality of historical task data available for each user.
 
 Users with limited task history receive less personalized predictions.
 
-### Deployment
+## Deployment
 
 The current configuration is primarily designed for local development and academic demonstration.
 
@@ -1007,49 +1043,11 @@ Future development may include:
 
 ---
 
-# Screenshots
-
-Screenshots can be added to:
-
-```text
-docs/screenshots/
-```
-
-Recommended screenshots:
-
-```text
-docs/
-└── screenshots/
-    ├── login.png
-    ├── dashboard.png
-    ├── tasks.png
-    ├── task-details.png
-    ├── ai-insights.png
-    ├── analytics.png
-    ├── notifications.png
-    └── administration.png
-```
-
-Example:
-
-```markdown
-![TaskAI Optimizer Dashboard](docs/screenshots/dashboard.png)
-```
-
----
-
-# Repository
-
-Source code:
-
-https://github.com/aziz11414/taskai-optimizer
-
----
-
 # Authors
 
 **Mohamed Aziz Hammami**
-GitHub: https://github.com/aziz11414
+
+GitHub: `@aziz11414`
 
 **Houssem Soltani**
 
